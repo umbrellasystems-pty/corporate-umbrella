@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
 import {
   BadgeCheck,
@@ -32,6 +32,19 @@ type Plan = {
 type Value = {
   title: string;
   body: string;
+};
+
+type InquiryForm = {
+  name: string;
+  surname: string;
+  email: string;
+  contactNumber: string;
+  companyName: string;
+  role: string;
+  branches: string;
+  officers: string;
+  cameras: string;
+  message: string;
 };
 
 const plans: Plan[] = [
@@ -152,6 +165,43 @@ const objectives = [
 const showUnderConstruction =
   import.meta.env.VITE_UNDER_CONSTRUCTION === "true";
 
+const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER ?? "27000000000";
+
+const emptyInquiryForm: InquiryForm = {
+  name: "",
+  surname: "",
+  email: "",
+  contactNumber: "",
+  companyName: "",
+  role: "",
+  branches: "",
+  officers: "",
+  cameras: "",
+  message: "",
+};
+
+function buildWhatsAppMessage(plan: Plan, form: InquiryForm) {
+  return [
+    `Umbrella Systems plan inquiry`,
+    ``,
+    `Selected plan: ${plan.name} Plan`,
+    `Plan description: ${plan.audience}`,
+    `Includes: ${plan.includes.join(", ")}`,
+    `Pricing reflects: ${plan.pricing.join(", ")}`,
+    ``,
+    `Customer details`,
+    `Name: ${form.name} ${form.surname}`,
+    `Email: ${form.email}`,
+    `Contact number: ${form.contactNumber}`,
+    `Company/Organisation: ${form.companyName}`,
+    `Role/Position: ${form.role || "Not provided"}`,
+    `Branches: ${form.branches || "Not provided"}`,
+    `Officers: ${form.officers || "Not provided"}`,
+    `Cameras: ${form.cameras || "Not provided"}`,
+    `Additional message: ${form.message || "Not provided"}`,
+  ].join("\n");
+}
+
 function UnderConstructionPage() {
   return (
     <main className="construction-page">
@@ -197,9 +247,42 @@ function UnderConstructionPage() {
 }
 
 function App() {
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+  const [form, setForm] = useState<InquiryForm>(emptyInquiryForm);
+
   if (showUnderConstruction) {
     return <UnderConstructionPage />;
   }
+
+  const closePlanModal = () => {
+    setSelectedPlan(null);
+    setForm(emptyInquiryForm);
+  };
+
+  const updateForm = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setForm((currentForm) => ({
+      ...currentForm,
+      [event.target.name]: event.target.value,
+    }));
+  };
+
+  const submitPlanInquiry = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!selectedPlan) {
+      return;
+    }
+
+    const message = buildWhatsAppMessage(selectedPlan, form);
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+      message,
+    )}`;
+
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+    closePlanModal();
+  };
 
   return (
     <main>
@@ -406,10 +489,16 @@ function App() {
                   ))}
                 </ul>
               </div>
-              <a className="plan-action" href="#vision">
-                Review fit
+              <button
+                className="plan-action"
+                type="button"
+                onClick={() => {
+                  setSelectedPlan(plan);
+                }}
+              >
+                Request consultation
                 <ChevronRight size={16} />
-              </a>
+              </button>
             </article>
           ))}
         </div>
@@ -490,6 +579,149 @@ function App() {
         </div>
         <a href="#top">Back to top</a>
       </footer>
+
+      {selectedPlan && (
+        <div
+          className="modal-backdrop"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="plan-inquiry-title"
+        >
+          <div className="modal-card">
+            <div className="modal-heading">
+              <div>
+                <p className="section-kicker">Plan inquiry</p>
+                <h2 id="plan-inquiry-title">
+                  Request the {selectedPlan.name} Plan
+                </h2>
+              </div>
+              <button
+                className="modal-close"
+                type="button"
+                aria-label="Close inquiry form"
+                onClick={closePlanModal}
+              >
+                ×
+              </button>
+            </div>
+
+            <p className="modal-intro">
+              Complete your details and we will prepare a WhatsApp message with
+              your selected plan and requirements.
+            </p>
+
+            <form className="inquiry-form" onSubmit={submitPlanInquiry}>
+              <label>
+                Name
+                <input
+                  name="name"
+                  value={form.name}
+                  onChange={updateForm}
+                  required
+                  autoComplete="given-name"
+                />
+              </label>
+              <label>
+                Surname
+                <input
+                  name="surname"
+                  value={form.surname}
+                  onChange={updateForm}
+                  required
+                  autoComplete="family-name"
+                />
+              </label>
+              <label>
+                Email
+                <input
+                  name="email"
+                  type="email"
+                  value={form.email}
+                  onChange={updateForm}
+                  required
+                  autoComplete="email"
+                />
+              </label>
+              <label>
+                Contact number
+                <input
+                  name="contactNumber"
+                  type="tel"
+                  value={form.contactNumber}
+                  onChange={updateForm}
+                  required
+                  autoComplete="tel"
+                />
+              </label>
+              <label>
+                Company / Organisation
+                <input
+                  name="companyName"
+                  value={form.companyName}
+                  onChange={updateForm}
+                  required
+                  autoComplete="organization"
+                />
+              </label>
+              <label>
+                Role / Position
+                <input
+                  name="role"
+                  value={form.role}
+                  onChange={updateForm}
+                  autoComplete="organization-title"
+                />
+              </label>
+              <label>
+                Number of branches
+                <input
+                  name="branches"
+                  inputMode="numeric"
+                  value={form.branches}
+                  onChange={updateForm}
+                />
+              </label>
+              <label>
+                Number of officers
+                <input
+                  name="officers"
+                  inputMode="numeric"
+                  value={form.officers}
+                  onChange={updateForm}
+                />
+              </label>
+              <label>
+                Number of cameras
+                <input
+                  name="cameras"
+                  inputMode="numeric"
+                  value={form.cameras}
+                  onChange={updateForm}
+                />
+              </label>
+              <label className="full-field">
+                Additional requirements
+                <textarea
+                  name="message"
+                  value={form.message}
+                  onChange={updateForm}
+                  rows={4}
+                />
+              </label>
+
+              <div className="modal-actions">
+                <button className="secondary-modal-action" type="button" onClick={closePlanModal}>
+                  Cancel
+                </button>
+                <button className="primary-modal-action" type="submit">
+                  Send via WhatsApp
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
