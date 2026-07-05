@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import {
   BadgeCheck,
@@ -45,6 +45,11 @@ type InquiryForm = {
   officers: string;
   cameras: string;
   message: string;
+};
+
+type SocialLink = {
+  label: string;
+  href: string;
 };
 
 const plans: Plan[] = [
@@ -166,6 +171,27 @@ const showUnderConstruction =
   import.meta.env.VITE_UNDER_CONSTRUCTION === "true";
 
 const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER ?? "27000000000";
+const cardAccessToken =
+  import.meta.env.VITE_CARD_ACCESS_TOKEN ?? "umbrella-card-access";
+
+const digitalCardProfile = {
+  slug: "emmanual",
+  name: "Emmanual R. Januarie",
+  title: "Founder & Software Engineer",
+  company: "Umbrella Systems (Pty) Ltd",
+  phone: "+27 00 000 0000",
+  email: "info@umbrellasystems.co.za",
+  website: "https://umbrellasystems.co.za",
+  location: "South Africa",
+  whatsappNumber,
+  profilePhoto: "/profile-emmanual.jpg",
+  logo: "/logo.png",
+  socialLinks: [
+    { label: "LinkedIn", href: "https://www.linkedin.com" },
+    { label: "Facebook", href: "https://www.facebook.com" },
+    { label: "Instagram", href: "https://www.instagram.com" },
+  ] satisfies SocialLink[],
+};
 
 const emptyInquiryForm: InquiryForm = {
   name: "",
@@ -200,6 +226,141 @@ function buildWhatsAppMessage(plan: Plan, form: InquiryForm) {
     `Cameras: ${form.cameras || "Not provided"}`,
     `Additional message: ${form.message || "Not provided"}`,
   ].join("\n");
+}
+
+function createVCard() {
+  return [
+    "BEGIN:VCARD",
+    "VERSION:3.0",
+    `N:Januarie;Emmanual;R.;;;`,
+    `FN:${digitalCardProfile.name}`,
+    `ORG:${digitalCardProfile.company}`,
+    `TITLE:${digitalCardProfile.title}`,
+    `TEL;TYPE=CELL:${digitalCardProfile.phone}`,
+    `EMAIL:${digitalCardProfile.email}`,
+    `URL:${digitalCardProfile.website}`,
+    `ADR;TYPE=WORK:;;;;;${digitalCardProfile.location}`,
+    "END:VCARD",
+  ].join("\n");
+}
+
+function downloadContact() {
+  const blob = new Blob([createVCard()], { type: "text/vcard;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = "emmanual-januarie.vcf";
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
+function DigitalBusinessCard() {
+  const whatsappMessage = encodeURIComponent(
+    `Hi ${digitalCardProfile.name}, I found your Umbrella Systems digital business card and would like to connect.`,
+  );
+  const whatsappUrl = `https://wa.me/${digitalCardProfile.whatsappNumber}?text=${whatsappMessage}`;
+
+  return (
+    <main className="card-page">
+      <section className="digital-card" aria-label="Digital business card">
+        <div className="card-topbar">
+          <img
+            className="card-logo"
+            src={digitalCardProfile.logo}
+            alt="Umbrella Systems logo"
+            onError={(event) => {
+              event.currentTarget.src = "/logo-placeholder.svg";
+            }}
+          />
+          <span>Digital Business Card</span>
+        </div>
+
+        <div className="profile-hero">
+          <img
+            className="profile-photo"
+            src={digitalCardProfile.profilePhoto}
+            alt={`${digitalCardProfile.name} profile`}
+            onError={(event) => {
+              event.currentTarget.src = "/profile-placeholder.svg";
+            }}
+          />
+          <div>
+            <p className="eyebrow">{digitalCardProfile.company}</p>
+            <h1>{digitalCardProfile.name}</h1>
+            <p>{digitalCardProfile.title}</p>
+          </div>
+        </div>
+
+        <div className="contact-list">
+          <a href={`tel:${digitalCardProfile.phone}`}>{digitalCardProfile.phone}</a>
+          <a href={`mailto:${digitalCardProfile.email}`}>{digitalCardProfile.email}</a>
+          <a href={digitalCardProfile.website}>{digitalCardProfile.website}</a>
+        </div>
+
+        <div className="card-actions">
+          <a className="primary-action" href={whatsappUrl} target="_blank" rel="noreferrer">
+            WhatsApp Business
+            <ChevronRight size={18} />
+          </a>
+          <button className="secondary-card-action" type="button" onClick={downloadContact}>
+            Save contact
+          </button>
+        </div>
+
+        <div className="wallet-section">
+          <span>Add to wallet</span>
+          <div>
+            <a href="/wallet/emmanual-apple.html">Apple Wallet</a>
+            <a href="/wallet/emmanual-google.html">Android Wallet</a>
+            <a href="/wallet/emmanual-oppo.html">OPPO Wallet</a>
+          </div>
+        </div>
+
+        <div className="social-section">
+          <span>Social links</span>
+          <div>
+            {digitalCardProfile.socialLinks.map((link) => (
+              <a href={link.href} key={link.label} target="_blank" rel="noreferrer">
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function CardAccessDenied() {
+  return (
+    <main className="card-page">
+      <section className="digital-card access-denied-card">
+        <div className="card-topbar">
+          <img
+            className="card-logo"
+            src="/logo.png"
+            alt="Umbrella Systems logo"
+            onError={(event) => {
+              event.currentTarget.src = "/logo-placeholder.svg";
+            }}
+          />
+          <span>Private Card</span>
+        </div>
+        <p className="eyebrow">
+          <LockKeyhole size={16} />
+          Access required
+        </p>
+        <h1>Digital card unavailable.</h1>
+        <p>
+          This business card is available through the official Umbrella Systems
+          QR code.
+        </p>
+        <a className="secondary-card-action access-home-link" href="/">
+          Return to website
+        </a>
+      </section>
+    </main>
+  );
 }
 
 function UnderConstructionPage() {
@@ -249,6 +410,17 @@ function UnderConstructionPage() {
 function App() {
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [form, setForm] = useState<InquiryForm>(emptyInquiryForm);
+  const [showContactHint, setShowContactHint] = useState(false);
+  const path = window.location.pathname.replace(/\/$/, "");
+  const accessParam = new URLSearchParams(window.location.search).get("access");
+
+  if (path === `/card/${digitalCardProfile.slug}`) {
+    if (accessParam !== cardAccessToken) {
+      return <CardAccessDenied />;
+    }
+
+    return <DigitalBusinessCard />;
+  }
 
   if (showUnderConstruction) {
     return <UnderConstructionPage />;
@@ -284,6 +456,20 @@ function App() {
     closePlanModal();
   };
 
+  useEffect(() => {
+    if (!showContactHint) {
+      return;
+    }
+
+    const timeout = window.setTimeout(() => {
+      setShowContactHint(false);
+    }, 5200);
+
+    return () => {
+      window.clearTimeout(timeout);
+    };
+  }, [showContactHint]);
+
   return (
     <main>
       <header className="site-header">
@@ -307,6 +493,15 @@ function App() {
           <a href="#platform">Platform</a>
           <a href="#plans">Plans</a>
           <a href="#vision">Vision</a>
+          <button
+            className="contact-nav-button"
+            type="button"
+            onClick={() => {
+              setShowContactHint(true);
+            }}
+          >
+            Contact us
+          </button>
         </nav>
       </header>
 
@@ -722,6 +917,19 @@ function App() {
           </div>
         </div>
       )}
+
+      <div
+        className={showContactHint ? "contact-hint visible" : "contact-hint"}
+        role="status"
+        aria-live="polite"
+      >
+        <strong>Contact Umbrella Systems</strong>
+        <span>
+          Click the Request consultation button, then click Send via WhatsApp to
+          contact us.
+        </span>
+        <a href="#plans">Go to plans</a>
+      </div>
     </main>
   );
 }

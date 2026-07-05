@@ -154,6 +154,177 @@ main {
   font-size: 0.9rem;
 }
 
+.card-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: clamp(18px, 4vw, 48px);
+  color: #ffffff;
+  background:
+    linear-gradient(135deg, rgba(9, 10, 12, 0.96), rgba(9, 10, 12, 0.82)),
+    url("./assets/security-operations-hero.png") center / cover,
+    #101114;
+}
+
+.digital-card {
+  width: min(100%, 720px);
+  padding: clamp(22px, 5vw, 42px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 14px;
+  background: rgba(17, 18, 21, 0.84);
+  box-shadow: 0 34px 100px rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(20px);
+}
+
+.card-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: clamp(30px, 6vw, 52px);
+  color: #d7d7d7;
+  font-size: 0.82rem;
+  font-weight: 780;
+  text-transform: uppercase;
+}
+
+.card-logo {
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 50%;
+  background: #ffffff;
+  object-fit: contain;
+  padding: 5px;
+}
+
+.profile-hero {
+  display: grid;
+  grid-template-columns: 132px 1fr;
+  gap: clamp(18px, 4vw, 30px);
+  align-items: center;
+}
+
+.profile-photo {
+  width: 132px;
+  height: 132px;
+  border: 3px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  object-fit: cover;
+  background: #ffffff;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.32);
+}
+
+.profile-hero h1 {
+  max-width: 520px;
+  margin-bottom: 10px;
+  font-size: clamp(2.1rem, 7vw, 4.2rem);
+  line-height: 0.98;
+}
+
+.profile-hero p:not(.eyebrow) {
+  color: #e6e6e6;
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  margin-bottom: 0;
+}
+
+.contact-list {
+  display: grid;
+  gap: 10px;
+  margin: clamp(28px, 5vw, 44px) 0;
+}
+
+.contact-list a {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 8px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+  font-weight: 720;
+  word-break: break-word;
+}
+
+.card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.secondary-card-action {
+  min-height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 7px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 820;
+}
+
+.wallet-section,
+.social-section {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.wallet-section > span,
+.social-section > span {
+  display: block;
+  color: #d7d7d7;
+  font-size: 0.82rem;
+  font-weight: 820;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.wallet-section div,
+.social-section div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.wallet-section a,
+.social-section a {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 13px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 7px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 0.88rem;
+  font-weight: 760;
+}
+
+.access-denied-card {
+  max-width: 620px;
+}
+
+.access-denied-card h1 {
+  font-size: clamp(2.5rem, 8vw, 4.8rem);
+}
+
+.access-denied-card > p:not(.eyebrow) {
+  color: #e2e2e2;
+  line-height: 1.7;
+  margin-bottom: 26px;
+}
+
+.access-home-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  padding: 0 18px;
+}
+
 .brand strong,
 footer strong {
   display: block;
@@ -185,6 +356,29 @@ nav a {
 
 nav a:hover {
   color: var(--red);
+}
+
+.contact-nav-button {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid rgba(201, 21, 33, 0.28);
+  border-radius: 7px;
+  color: var(--red-dark);
+  background: var(--soft-red);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+  transition:
+    color 180ms ease,
+    background 180ms ease,
+    border-color 180ms ease;
+}
+
+.contact-nav-button:hover {
+  color: #ffffff;
+  border-color: var(--red);
+  background: var(--red);
 }
 
 .hero {
@@ -756,6 +950,58 @@ footer a {
   text-underline-offset: 3px;
 }
 
+.contact-hint {
+  position: fixed;
+  right: clamp(16px, 3vw, 32px);
+  bottom: clamp(16px, 3vw, 32px);
+  z-index: 80;
+  width: min(calc(100vw - 32px), 430px);
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-left: 4px solid var(--red);
+  border-radius: 10px;
+  color: #ffffff;
+  background: rgba(17, 18, 21, 0.94);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(18px);
+  transition:
+    opacity 240ms ease,
+    transform 240ms ease;
+  backdrop-filter: blur(16px);
+}
+
+.contact-hint.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.contact-hint strong,
+.contact-hint span {
+  display: block;
+}
+
+.contact-hint strong {
+  margin-bottom: 6px;
+}
+
+.contact-hint span {
+  color: #d7d7d7;
+  line-height: 1.5;
+}
+
+.contact-hint a {
+  display: inline-flex;
+  margin-top: 12px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 820;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -931,6 +1177,7 @@ footer a {
   nav {
     width: 100%;
     justify-content: space-between;
+    flex-wrap: wrap;
   }
 
   .hero {
@@ -954,6 +1201,19 @@ footer a {
 
   .hero-panel {
     min-width: 0;
+  }
+
+  .profile-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-photo {
+    width: 118px;
+    height: 118px;
+  }
+
+  .card-actions {
+    grid-template-columns: 1fr;
   }
 
   .function-grid,
